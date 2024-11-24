@@ -114,7 +114,7 @@ export function FoodOffers({ className, isEstablishment = false }: React.HTMLAtt
                 onChange={(e) => setNameFilter(e.target.value)}
               />
             </div>
-            <div className="flex flex-col space-y-1.5">
+            {/* <div className="flex flex-col space-y-1.5">
               <Label htmlFor="category">Categoria</Label>
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger id="category">
@@ -128,7 +128,7 @@ export function FoodOffers({ className, isEstablishment = false }: React.HTMLAtt
                   <SelectItem value="Pratos Prontos">Pratos Prontos</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
             <div className="flex items-end">
               <Button onClick={handleFilter}>Filtrar</Button>
             </div>

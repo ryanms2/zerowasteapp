@@ -1,22 +1,5 @@
-import { Metadata } from "next"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { DashboardShell } from "@/components/dashboard-shell"
-import { SettingsForm } from "@/components/settings-form"
+import { SettingsPage } from "./_components/configuracoes_page";
 
-export const metadata: Metadata = {
-  title: "Configurações | ZeroWasteApp",
-  description: "Gerencie suas configurações no ZeroWasteApp",
+export default function Home() {
+  return <SettingsPage/>
 }
-
-export default function SettingsPage() {
-  return (
-    <DashboardShell>
-      <DashboardHeader
-        heading="Configurações"
-        text="Gerencie suas preferências e configurações de conta."
-      />
-      <SettingsForm className="mt-8" />
-    </DashboardShell>
-  )
-}
-

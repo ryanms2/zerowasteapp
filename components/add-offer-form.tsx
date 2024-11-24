@@ -121,7 +121,7 @@ export function AddOfferForm({ onSuccess }: { onSuccess: () => void }) {
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name="originalPrice"
             render={({ field }) => (
@@ -133,7 +133,7 @@ export function AddOfferForm({ onSuccess }: { onSuccess: () => void }) {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
         </div>
         <FormField
           control={form.control}
@@ -148,7 +148,7 @@ export function AddOfferForm({ onSuccess }: { onSuccess: () => void }) {
             </FormItem>
           )}
         />
-        <FormField
+        {/* <FormField
           control={form.control}
           name="category"
           render={({ field }) => (
@@ -170,7 +170,7 @@ export function AddOfferForm({ onSuccess }: { onSuccess: () => void }) {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <FormField
           control={form.control}
           name="expirationDate"

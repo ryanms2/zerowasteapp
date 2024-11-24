@@ -151,7 +151,7 @@ export function FoodOffers({ className, isEstablishment = false }: React.HTMLAtt
                   <CardTitle className="text-lg">{offer.name}</CardTitle>
                   <p className="text-sm text-muted-foreground">{offer.store}</p>
                 </div>
-                <Badge>{offer.category}</Badge>
+                {/* <Badge>{offer.category}</Badge> */}
               </div>
             </CardHeader>
             <CardContent className="flex-grow">
@@ -167,7 +167,7 @@ export function FoodOffers({ className, isEstablishment = false }: React.HTMLAtt
                 <div className="flex items-center text-sm">
                   <DollarSign className="mr-2 h-4 w-4" />
                   <span className="font-bold">{offer.price}</span>
-                  <span className="text-sm line-through ml-2 text-muted-foreground">{offer.originalPrice}</span>
+                  {/* <span className="text-sm line-through ml-2 text-muted-foreground">{offer.originalPrice}</span> */}
                 </div>
                 <p className="text-sm">Quantidade: {offer.quantity}</p>
               </div>

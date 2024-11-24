@@ -18,11 +18,12 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { AuthContext } from "@/context/authContext";
 import { api } from "@/services/api";
-import { parseCookies } from "nookies";
+import { parseCookies, setCookie } from "nookies";
 import { useContext, useEffect } from "react";
 
 export function UserNav() {
   const { user } = useContext(AuthContext);
+  
   // useEffect(() => {
   //   const fetchUser = async () => {
       

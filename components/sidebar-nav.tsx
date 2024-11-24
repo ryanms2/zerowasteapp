@@ -1,12 +1,10 @@
-"use client"
-
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
-import { Home, ShoppingBag, BarChart2, Settings } from 'lucide-react'
+import { Home, Apple, ShoppingBag, BarChart2, Settings } from 'lucide-react'
 
-export function SidebarNav() {
+export function SidebarNav({ className }: React.HTMLAttributes<HTMLElement>) {
   const pathname = usePathname()
 
   const items = [
@@ -16,8 +14,13 @@ export function SidebarNav() {
       icon: Home,
     },
     {
-      title: "Ofertas",
+      title: "Ofertas de Alimentos",
       href: "/dashboard/ofertas",
+      icon: Apple,
+    },
+    {
+      title: "Meus Anúncios",
+      href: "/dashboard/anuncios",
       icon: ShoppingBag,
     },
     {
@@ -33,7 +36,7 @@ export function SidebarNav() {
   ]
 
   return (
-    <nav className="flex flex-col space-y-1">
+    <nav className={cn("flex flex-col space-y-1", className)}>
       {items.map((item) => (
         <Link
           key={item.href}

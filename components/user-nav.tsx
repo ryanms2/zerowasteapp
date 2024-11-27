@@ -17,27 +17,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { AuthContext } from "@/context/authContext";
-import { api } from "@/services/api";
-import { parseCookies, setCookie } from "nookies";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 
 export function UserNav() {
   const { user } = useContext(AuthContext);
-  
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-      
-  //     const { 'zerowaste.token': token } = parseCookies();
-  //     try {
-  //       api.defaults.headers['Authorization'] = `Bearer ${token}`;
-  //       const response = await api.get('/me')
-  //       console.log(response.data)
-  //     } catch (error: any) {
-  //       console.error(error.response)
-  //     }
-  //   }
-  //   fetchUser()
-  //   },[])
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

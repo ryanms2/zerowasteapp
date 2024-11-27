@@ -6,18 +6,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { getActiveOffers, getUsers } from "@/services/data"
 import { ShoppingBag, Users, DollarSign, Leaf } from 'lucide-react'
+import { parseCookies } from "nookies"
+import { useEffect, useState } from "react"
 
 export function Overview() {
+  const [activeOffers, setActiveOffers] = useState([])
+  const [users, setUsers] = useState(0)
   const items = [
     {
       title: "Ofertas Ativas",
-      value: "54",
+      value: activeOffers.length,
       icon: ShoppingBag,
     },
     {
       title: "Usuários",
-      value: "2,345",
+      value: users,
       icon: Users,
     },
     {
@@ -31,6 +36,23 @@ export function Overview() {
       icon: Leaf,
     },
   ]
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { "zerowaste.token": token } = parseCookies();
+      const data = await getActiveOffers( token )
+      const allUsers = await getUsers( token )
+      if (data === 'Unauthorized' || allUsers === 'Unauthorized') {
+        setActiveOffers([])
+        setUsers(0)
+        return
+      }
+      
+      setActiveOffers(data)
+      setUsers(allUsers)
+    }
+    fetchData()
+  }, [])
 
   return (
     <>

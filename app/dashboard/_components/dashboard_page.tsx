@@ -1,6 +1,6 @@
 "use client"
 
-import { Metadata } from "next"
+import { GetServerSideProps, Metadata } from "next"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { DashboardShell } from "@/components/dashboard-shell"
 import { Overview } from "@/components/overview"
@@ -39,4 +39,11 @@ export function DashboardPage() {
       </div>
     </DashboardShell>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  console.log(ctx.req.cookies)
+  return {
+    props: {},
+  }
 }

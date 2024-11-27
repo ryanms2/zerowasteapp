@@ -35,7 +35,7 @@ export type AuthContextType = {
     isAuthenticated: boolean;
     user: User | null;
     updateUser?: (data: User) => Promise<void>;
-    signIn: (data: SignInData) => Promise<void>;
+    signIn: (data: SignInData) => Promise<void | unknown>;
     signOut: () => void;
 }
 
@@ -78,4 +78,35 @@ export type RecentActivitiesProps = {
     user_image: string;
     user_name: string;
     timestamp: string;
+}
+
+export type FoodUpdateProps = {
+  id?: number
+  name: string
+  description: string
+  expiration: string
+  quantity: number
+  price: number
+  originalPrice: number
+  category: string
+  location: string
+  status: 'Available' | 'Expired' | 'Reserved'
+  userId: number
+  createdAt: string
+  updatedAt: string
+}
+
+export type FoodProps = {
+  name: string
+  description: string
+  expiration: string
+  quantity: number
+  price: number
+  originalPrice: number
+  category: string
+  location: string
+  status: 'Available' | 'Expired' | 'Reserved'
+  userId: number
+  createdAt: string
+  updatedAt: string
 }

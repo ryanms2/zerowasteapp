@@ -2,10 +2,11 @@
 "use client"
 
 import { createContext, useEffect, useState } from "react";
-import { destroyCookie, parseCookies, setCookie } from "nookies";
+import { destroyCookie, parseCookies } from "nookies";
 import { api } from "@/services/api";
 import { AuthContextType, AuthTokenType, SignInData, User } from "@/types";
 import { useRouter } from "next/navigation";
+import { login } from "@/auth";
 
 export const AuthContext = createContext({} as AuthContextType);
 
@@ -16,23 +17,13 @@ export function AuthProvider({ children }: any) {
 
   async function signIn({ email, password }: SignInData) {
     try {
-      const response = await api.post("/login", {
-        email,
-        password,
-      });
-
-      const { token } = response.data;
-
-      setCookie(undefined, "zerowaste.token", token, {
-        maxAge: 60 * 60 * 24, // 24 hours
-      });
-      
-      api.defaults.headers["Authorization"] = `Bearer ${token}`;
-
+      const result = await login({ email, password });
+      setUser(result.user);
       router.push("/dashboard");
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || "Erro ao fazer login");
+    } catch (error) {
+      return error;
     }
+    
   }
 
   function signOut() {
@@ -43,27 +34,34 @@ export function AuthProvider({ children }: any) {
 
   useEffect(() => {
     const { "zerowaste.token": token } = parseCookies();
+    
+    if (!token) return;
 
-    if (token) {
-      const validateToken = async () => {
-        try {
-          api.defaults.headers["Authorization"] = `Bearer ${token}`;
-          const validateToken: AuthTokenType = await api.get("/me");
-
-          console.log(validateToken.data);
-
-          setUser({
-            id: validateToken.data.id,
-            name: validateToken.data.name,
-            email: validateToken.data.email,
-            role: validateToken.data.role,
-          });
-        } catch (error: any) {
-          signOut();
+    const validateTokenAndSetUser = async () => {
+      try {
+        // Validate token expiration
+        const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+        const isTokenExpired = Date.now() >= tokenPayload.exp * 1000;
+        
+        if (isTokenExpired) {
+          destroyCookie(undefined, "zerowaste.token");
+          return;
         }
-      };
-      validateToken();
-    }
+
+        // Validate token with API and set user data
+        api.defaults.headers["Authorization"] = `Bearer ${token}`;
+        const response: AuthTokenType = await api.get("/me");
+        const { id, name, email, role } = response.data;
+
+        setUser({ id, name, email, role });
+
+      } catch {
+        destroyCookie(undefined, "zerowaste.token");
+        signOut();
+      }
+    };
+
+    validateTokenAndSetUser();
   }, []);
 
   return (

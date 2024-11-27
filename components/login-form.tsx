@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,8 +14,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { toast } from "@/hooks/use-toast"
-import { api } from "@/services/api"
-import { setCookie } from "nookies"
+import { login } from "@/auth"
 
 const loginFormSchema = z.object({
   email: z.string().email({
@@ -26,12 +24,6 @@ const loginFormSchema = z.object({
     message: "A senha deve ter pelo menos 5 caracteres.",
   }),
 })
-
-type responseSchemaProps = {
-  data: {
-    access_token: string,
-  },
-}
 
 export function LoginForm() {
   const router = useRouter()
@@ -49,13 +41,15 @@ export function LoginForm() {
     setIsLoading(true)
     
     // TODO: Implement actual login logic here
-    try {
-      await api.post("/login", data).then((response: responseSchemaProps) => {
-
-        setCookie(null, "zerowaste.token", response.data.access_token, {
-          maxAge: 60 * 60 * 1,
-        })
-        
+        const response = await login(data)
+        if (!response || response.error || response === "Email ou senha incorretos.") {
+          setIsLoading(false)
+          toast({
+            title: "Erro ao fazer login",
+            description: "Email ou senha incorretos.",
+          })
+          return
+        }
 
         setIsLoading(false)
         toast({
@@ -63,19 +57,9 @@ export function LoginForm() {
           description: "Você será redirecionado para o painel.",
         })
         router.push("/dashboard")
-    })
-    } catch (error) {
-      setIsLoading(false)
-      toast({
-        title: "Erro ao fazer login",
-        description: "Email ou senha incorretos.",
-      })
+    
+      
       return
-      
-    }
-       
-
-      
     
   }
 

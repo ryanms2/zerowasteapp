@@ -1,10 +1,16 @@
+"use client"
+
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Home, Apple, ShoppingBag, BarChart2, Settings } from 'lucide-react'
 
-export function SidebarNav({ className }: React.HTMLAttributes<HTMLElement>) {
+interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
+  isEstablishment: boolean;
+}
+
+export function SidebarNav({ className, isEstablishment }: SidebarNavProps) {
   const pathname = usePathname()
 
   const items = [
@@ -18,11 +24,15 @@ export function SidebarNav({ className }: React.HTMLAttributes<HTMLElement>) {
       href: "/dashboard/ofertas",
       icon: Apple,
     },
-    {
-      title: "Meus Anúncios",
-      href: "/dashboard/anuncios",
-      icon: ShoppingBag,
-    },
+    ...(isEstablishment
+      ? [
+          {
+            title: "Meus Anúncios",
+            href: "/dashboard/anuncios",
+            icon: ShoppingBag,
+          },
+        ]
+      : []),
     {
       title: "Relatórios",
       href: "/dashboard/relatorios",

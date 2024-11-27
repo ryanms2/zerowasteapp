@@ -1,72 +1,22 @@
 "use client"
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { MapPin, Clock, DollarSign, ShoppingCart, PlusCircle } from 'lucide-react'
-import { AddOfferForm } from "./add-offer-form"
+import { MapPin, Clock, DollarSign, ShoppingCart } from 'lucide-react'
+import { getActiveOffers } from '@/services/data'
+import { parseCookies } from 'nookies'
+import { FoodUpdateProps } from '@/types'
 
-const offers = [
-  {
-    id: "1",
-    name: "Pão Francês",
-    store: "Padaria do João",
-    location: "Rua das Flores, 123",
-    price: "R$ 5,00",
-    originalPrice: "R$ 10,00",
-    expiration: "Hoje, 20:00",
-    quantity: "10 unidades",
-    category: "Padaria",
-    image: "/placeholder.svg?height=100&width=100",
-  },
-  {
-    id: "2",
-    name: "Frutas Variadas",
-    store: "Mercado Central",
-    location: "Av. Principal, 456",
-    price: "R$ 10,00",
-    originalPrice: "R$ 20,00",
-    expiration: "Amanhã, 12:00",
-    quantity: "5 kg",
-    category: "Hortifruti",
-    image: "/placeholder.svg?height=100&width=100",
-  },
-  {
-    id: "3",
-    name: "Iogurte Natural",
-    store: "Laticínios Silva",
-    location: "Rua do Comércio, 789",
-    price: "R$ 3,50",
-    originalPrice: "R$ 7,00",
-    expiration: "Em 2 dias",
-    quantity: "500g",
-    category: "Laticínios",
-    image: "/placeholder.svg?height=100&width=100",
-  },
-  {
-    id: "4",
-    name: "Frango Assado",
-    store: "Restaurante Bom Sabor",
-    location: "Praça da Alimentação, 321",
-    price: "R$ 15,00",
-    originalPrice: "R$ 25,00",
-    expiration: "Hoje, 22:00",
-    quantity: "1 unidade",
-    category: "Pratos Prontos",
-    image: "/placeholder.svg?height=100&width=100",
-  },
-]
-
-export function FoodOffers({ className, isEstablishment = false }: React.HTMLAttributes<HTMLDivElement> & { isEstablishment?: boolean }) {
-  const [filteredOffers, setFilteredOffers] = useState(offers)
+export function FoodOffers({ className }: React.HTMLAttributes<HTMLDivElement>) {
+  const [offers, setOffers] = useState<FoodUpdateProps[]>([])
+  const [filteredOffers, setFilteredOffers] = useState<FoodUpdateProps[]>([])
   const [nameFilter, setNameFilter] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
-  const [isAddOfferOpen, setIsAddOfferOpen] = useState(false)
 
   const handleFilter = () => {
     const filtered = offers.filter(offer => 
@@ -76,32 +26,33 @@ export function FoodOffers({ className, isEstablishment = false }: React.HTMLAtt
     setFilteredOffers(filtered)
   }
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const { "zerowaste.token": token } = parseCookies();
+      const response = await getActiveOffers( token )
+      if (response === 'Unauthorized') {
+        setOffers([])
+        setFilteredOffers([])
+        return
+      }
+
+      setOffers(response)
+      setFilteredOffers(response)
+    }
+
+    fetchData()
+  }, [])
+
+  // Atualiza o filtro sempre que os critérios mudarem
+  useEffect(() => {
+    handleFilter()
+  }, [nameFilter, categoryFilter])
+
   return (
     <div className={className}>
       <Card className="mb-6">
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle>Filtrar Ofertas</CardTitle>
-            {isEstablishment && (
-              <Dialog open={isAddOfferOpen} onOpenChange={setIsAddOfferOpen}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Adicionar Oferta
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Adicionar Nova Oferta</DialogTitle>
-                    <DialogDescription>
-                      Preencha os detalhes da nova oferta abaixo.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <AddOfferForm onSuccess={() => setIsAddOfferOpen(false)} />
-                </DialogContent>
-              </Dialog>
-            )}
-          </div>
+          <CardTitle>Filtrar Ofertas</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
@@ -114,7 +65,7 @@ export function FoodOffers({ className, isEstablishment = false }: React.HTMLAtt
                 onChange={(e) => setNameFilter(e.target.value)}
               />
             </div>
-            {/* <div className="flex flex-col space-y-1.5">
+            <div className="flex flex-col space-y-1.5">
               <Label htmlFor="category">Categoria</Label>
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger id="category">
@@ -128,7 +79,7 @@ export function FoodOffers({ className, isEstablishment = false }: React.HTMLAtt
                   <SelectItem value="Pratos Prontos">Pratos Prontos</SelectItem>
                 </SelectContent>
               </Select>
-            </div> */}
+            </div>
             <div className="flex items-end">
               <Button onClick={handleFilter}>Filtrar</Button>
             </div>
@@ -149,9 +100,9 @@ export function FoodOffers({ className, isEstablishment = false }: React.HTMLAtt
               <div className="flex justify-between items-start">
                 <div>
                   <CardTitle className="text-lg">{offer.name}</CardTitle>
-                  <p className="text-sm text-muted-foreground">{offer.store}</p>
+                  {/* <p className="text-sm text-muted-foreground">{offer.store}</p> */}
                 </div>
-                {/* <Badge>{offer.category}</Badge> */}
+                <Badge>{offer.category}</Badge>
               </div>
             </CardHeader>
             <CardContent className="flex-grow">
@@ -162,12 +113,16 @@ export function FoodOffers({ className, isEstablishment = false }: React.HTMLAtt
                 </div>
                 <div className="flex items-center text-sm">
                   <Clock className="mr-2 h-4 w-4" />
-                  <span>Vence: {offer.expiration}</span>
+                  <span>Vence em {new Date(offer.expiration).toLocaleDateString('pt-BR', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                  })}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <DollarSign className="mr-2 h-4 w-4" />
                   <span className="font-bold">{offer.price}</span>
-                  {/* <span className="text-sm line-through ml-2 text-muted-foreground">{offer.originalPrice}</span> */}
+                  <span className="text-sm line-through ml-2 text-muted-foreground">{offer.originalPrice}</span>
                 </div>
                 <p className="text-sm">Quantidade: {offer.quantity}</p>
               </div>
@@ -184,4 +139,3 @@ export function FoodOffers({ className, isEstablishment = false }: React.HTMLAtt
     </div>
   )
 }
-

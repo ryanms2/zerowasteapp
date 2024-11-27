@@ -9,11 +9,12 @@ import { Button } from "@/components/ui/button"
 import { Menu } from 'lucide-react'
 
 export default function DashboardLayout({
-children,
+  children,
 }: {
-children: React.ReactNode
+  children: React.ReactNode
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const isEstablishment = true // TODO: Implement actual user role check
 
   return (
     <div className="flex min-h-screen">
@@ -21,7 +22,7 @@ children: React.ReactNode
         <div className="flex h-14 items-center border-b px-4">
           <DashboardNav />
         </div>
-        <SidebarNav className="flex-1 px-4 py-6" />
+        <SidebarNav className="flex-1 px-4 py-6" isEstablishment={isEstablishment} />
       </aside>
       <div className="flex-1">
         <header className="sticky top-0 z-40 border-b bg-background">
@@ -37,7 +38,7 @@ children: React.ReactNode
                 <div className="flex h-14 items-center border-b px-4">
                   <DashboardNav />
                 </div>
-                <SidebarNav className="px-4 py-6" />
+                <SidebarNav className="px-4 py-6" isEstablishment={isEstablishment} />
               </SheetContent>
             </Sheet>
             <div className="md:hidden">
